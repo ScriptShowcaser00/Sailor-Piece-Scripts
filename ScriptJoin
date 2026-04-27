@@ -1,0 +1,28 @@
+local QueueOnTeleport = queue_on_teleport or queueonteleport
+local TARGET_PLACE_ID = 77747658251236
+
+if game.PlaceId == TARGET_PLACE_ID then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ScriptShowcaser00/Sailor-Piece-Scripts/refs/heads/main/NewSailorPieceScript"))()
+else
+    if QueueOnTeleport then
+        (setfflag or function() end)("DebugRunParallelLuaOnMainThread", "True")
+
+        QueueOnTeleport([[
+            repeat task.wait() until game:IsLoaded()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ScriptShowcaser00/Sailor-Piece-Scripts/refs/heads/main/NewSailorPieceScript"))()
+        ]])
+
+        local ts = game:GetService("TeleportService")
+        local lp = game.Players.LocalPlayer
+
+        local success = pcall(function()
+            ts:Teleport(TARGET_PLACE_ID, lp)
+        end)
+
+        if not success then
+            ts:TeleportToPlaceInstance(game.PlaceId, game.JobId, lp)
+        end
+    else
+        game.Players.LocalPlayer:Kick("QueueOnTeleport not supported by your executor.")
+    end
+end
